@@ -1,14 +1,64 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="card">
-    <h2>Painel Executivo</h2>
-    <p>Total Funcionários: {{ total }}</p>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div style="display:flex; gap:20px; flex-wrap:wrap;">
+
+    <div class="card" style="flex:1; min-width:200px;">
+        <h3>Total Funcionários</h3>
+        <h1 style="color:#0a6ed1;">{{ total }}</h1>
+    </div>
+
+    <div class="card" style="flex:1; min-width:200px;">
+        <h3>Faltas</h3>
+        <h1 style="color:#d04545;">{{ faltas }}</h1>
+    </div>
+
+    <div class="card" style="flex:1; min-width:200px;">
+        <h3>Advertências</h3>
+        <h1 style="color:#e9730c;">{{ advert }}</h1>
+    </div>
+
+    <div class="card" style="flex:1; min-width:200px;">
+        <h3>Atestados</h3>
+        <h1 style="color:#107e3e;">{{ atest }}</h1>
+    </div>
+
 </div>
 
+<br>
+
 <div class="card">
-    <h3>Indicadores</h3>
-    <img src="/grafico">
+    <h3>Indicadores Gerais</h3>
+    <canvas id="graficoPizza"></canvas>
 </div>
+
+<script>
+const ctx = document.getElementById('graficoPizza');
+
+new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Faltas', 'Advertências', 'Atestados'],
+        datasets: [{
+            data: [{{ faltas }}, {{ advert }}, {{ atest }}],
+            backgroundColor: [
+                '#d04545',
+                '#e9730c',
+                '#107e3e'
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+</script>
 
 {% endblock %}
