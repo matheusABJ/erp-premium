@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ERP Premium</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+        }
+
+        .sidebar {
+            width: 220px;
+            height: 100vh;
+            background: #0a6ed1;
+            position: fixed;
+            color: white;
+            padding-top: 20px;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            padding: 12px;
+            text-decoration: none;
+        }
+
+        .sidebar a:hover {
+            background: #0854a0;
+        }
+
+        .content {
+            margin-left: 220px;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .topbar {
+            background: white;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        button {
+            background: #0a6ed1;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+        }
+
+        input, select {
+            padding: 6px;
+            margin: 4px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>ERP</h2>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/funcionarios">Funcionários</a>
+    <a href="/relatorio_pdf">Relatório PDF</a>
+    <a href="/logout">Sair</a>
+</div>
+
+<div class="content">
+    <div class="topbar">
+        Sistema Corporativo - Estilo SAP
+    </div>
+
+    {% block content %}{% endblock %}
+</div>
+
+</body>
+</html>
