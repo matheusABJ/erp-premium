@@ -3,7 +3,8 @@ from flask import Flask, request, redirect, send_file
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
+import matplotlib
+matplotlib.use("Agg")  # IMPORTANTE para Render
 import matplotlib.pyplot as plt
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table
 from reportlab.lib.styles import getSampleStyleSheet
@@ -11,7 +12,17 @@ from reportlab.lib.pagesizes import A4
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'erp_super_seguro'
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///erp.db')
+
+# Corrige DATABASE_URL do Render
+database_url = os.environ.get("DATABASE_URL")
+
+if database_url:
+    if database_url.startswith("postgres://"):
+        database_url = database_url.replace("postgres://", "postgresql://", 1)
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///erp.db"
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -35,12 +46,11 @@ class Registro(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     funcionario = db.Column(db.String(100))
     tipo = db.Column(db.String(20))
-    data = db.Column(db.String(20))
 
 with app.app_context():
     db.create_all()
     if User.query.count() == 0:
-        for i in range(1,11):
+        for i in range(1, 11):
             db.session.add(User(
                 username=f"admin{i}",
                 password=generate_password_hash("1234"),
@@ -61,6 +71,7 @@ def login():
         if user and check_password_hash(user.password, request.form["pass"]):
             login_user(user)
             return redirect("/dashboard")
+        return "Login inválido"
     return """
     <h2>ERP Premium - Login</h2>
     <form method="post">
@@ -81,7 +92,7 @@ def dashboard():
     atest = Registro.query.filter_by(tipo="atestado").count()
 
     plt.figure()
-    plt.pie([faltas,advert,atest],
+    plt.pie([faltas or 1, advert or 1, atest or 1],
             labels=["Faltas","Advertências","Atestados"],
             autopct='%1.1f%%')
     plt.title("Relatório Geral")
